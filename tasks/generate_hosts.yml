@@ -1,0 +1,38 @@
+---
+
+- name: Generate hosts file
+  template: src=hosts.j2 dest=/etc/ansible/hosts_{{cluster_tag}} backup=yes
+  become: yes
+
+- name: Copy OCP conf /tmp/.
+  template: src=okd_hosts.j2 dest=/tmp/okd_hosts_{{cluster_tag}}
+  become: yes
+  when: okd_param_dir is undefined
+
+- name: Copy OCP conf /tmp/.
+  template: src="{{ okd_param_dir }}/{{ okd_param_name }}" dest=/tmp/okd_hosts_{{cluster_tag}}
+  become: yes
+  when: okd_param_dir is defined
+
+- name: Reformat variable to hosts file
+  replace:
+    path: /tmp/okd_hosts_{{cluster_tag}}
+    regexp: '(\b:) '
+    replace: '='
+  become: yes
+
+- name: Load OCP configuration
+  command: "cat /tmp/okd_hosts_{{cluster_tag}}"
+  register: "okd_conf"
+  become: yes
+
+- name: Add okd cluster parameters into hosts file
+  lineinfile:
+    path: /etc/ansible/hosts_{{cluster_tag}}
+    line: "{{okd_conf.stdout}}"
+    insertafter: "OSEv3:vars"
+  become: yes
+
+- name: Overwrite default hosts file
+  copy: src=/etc/ansible/hosts_{{cluster_tag}} dest=/etc/ansible/hosts backup=yes
+  become: yes

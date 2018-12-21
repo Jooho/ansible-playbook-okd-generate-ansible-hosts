@@ -1,0 +1,23 @@
+---
+
+- name: Check params
+  fail:
+    msg: " Fail because one of essential params is not defined : okd_param_dir, cluster_tag "
+  when:
+  - reformat_vars_to_hosts
+  - okd_param_dir is undefined or cluster_tag is undefined
+
+- name: Check params
+  fail:
+    msg: " Fail because one of essential params is not defined : okd_param_dir"
+  when:
+  - not reformat_vars_to_hosts
+  - okd_param_dir is undefined
+
+- name: Generate ansible hosts file for OKD installation
+  include: generate_hosts.yml
+  when: reformat_vars_to_hosts
+
+- name: Generate vairable sytle file from official hosts file.
+  include: generate_okd_param_official.yml
+  when: not reformat_vars_to_hosts

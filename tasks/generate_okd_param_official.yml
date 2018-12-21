@@ -1,0 +1,13 @@
+---
+
+- name: Copy OKD example conf /tmp/.
+  copy: src="{{ okd_param_dir }}/{{ okd_official_ansible_hosts_name }}" dest=/tmp/okd_hosts_example_hosts
+
+- name: Reformat hosts file to variable
+  replace:
+    path: /tmp/okd_hosts_example_hosts
+    regexp: '(\b=)'
+    replace: ': '
+
+- name: Add okd cluster parameters into hosts file
+  copy: src="/tmp/okd_hosts_example_hosts" dest="{{ okd_param_dir }}/{{ okd_official_param_name }}"
