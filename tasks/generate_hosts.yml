@@ -4,12 +4,12 @@
   template: src=hosts.j2 dest=/etc/ansible/hosts_{{cluster_tag}} backup=yes
   become: yes
 
-- name: Copy OCP conf /tmp/.
+- name: Copy OKD conf /tmp/.
   template: src=okd_hosts.j2 dest=/tmp/okd_hosts_{{cluster_tag}}
   become: yes
   when: okd_param_dir is undefined
 
-- name: Copy OCP conf /tmp/.
+- name: Copy OKD conf /tmp/.
   template: src="{{ okd_param_dir }}/{{ okd_param_name }}" dest=/tmp/okd_hosts_{{cluster_tag}}
   become: yes
   when: okd_param_dir is defined
@@ -21,7 +21,7 @@
     replace: '='
   become: yes
 
-- name: Load OCP configuration
+- name: Load OKD configuration
   command: "cat /tmp/okd_hosts_{{cluster_tag}}"
   register: "okd_conf"
   become: yes
