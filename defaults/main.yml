@@ -1,5 +1,5 @@
 reformat_vars_to_hosts: true
 
-okd_param_name: okd_param
+okd_param_name: okd_param.yml
 okd_official_param_name: okd_param_official
 okd_official_ansible_hosts_name: okd_official_hosts
